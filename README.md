@@ -8,4 +8,5 @@ combinations_v2.rds, dataout17April.rds and readme_fordata.txt  - data files use
 test.h5  - selected best performing Neural Network
 
 Folder ftjs_model – TensorFlow JavaScript export of test.h5
+
 Folder NNmodel – contains the PWA application which can be run from https://stats.mrc.gm/NNmodel
