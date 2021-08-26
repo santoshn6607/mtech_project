@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mortality demo</title>
+    <link rel="apple-touch-icon" href="icon/apple-touch-icon-180x180.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#317EFB"/>
+    <link href="style.css" rel="stylesheet">
+    <link href="datastyle.css" rel="stylesheet">
+    <noscript>
+      <link href="noscript.css" rel="stylesheet">
+    </noscript>
+    <script src="index.js" defer></script>
+    <script src="tf.min.js"></script>
+    <script>
+      function testout(){
+        (async () => {
+            try
+            {
+                if (document.getElementById("age").value==""){
+			 document.getElementById("age").focus(); 
+                }  else if (document.getElementById("beats").value==""){
+                         document.getElementById("beats").focus();
+                }  else if (document.getElementById("muac").value==""){
+                         document.getElementById("muac").focus(); 
+                }  else if (document.getElementById("oxsat").value==""){
+                         document.getElementById("oxsat").focus();
+                }else{ 
+                try {
+                    const model = await tf.loadLayersModel('indexeddb://report-exec-time-model');
+                } catch(e){
+                    const model = await tf.loadLayersModel('/NNmodel/tfjs_model/model.json');
+                    await model.save('indexeddb://report-exec-time-model');
+                }
+                const model = await tf.loadLayersModel('indexeddb://report-exec-time-model');
+                var age = parseFloat(document.getElementById('age').value)
+                var beats = parseFloat(document.getElementById('beats').value)
+                var oxsat = parseFloat(document.getElementById('oxsat').value)
+                var muac = parseFloat(document.getElementById('muac').value)
+                var conv = document.getElementsByName('conv')
+                var val = parseFloat(0)
+
+                 if (conv[0].checked) {
+                    	val=1
+                    }
+                //console.log(val)
+                const xs = tf.tensor2d([age,beats ,muac,oxsat,val],[1, 5])
+                const xsMean = tf.tensor([448.528964   ,155.599101,  13.413486  ,96.495981  ,0.125596])
+                const xsStd  = tf.tensor([366.566533   , 21.187791,   1.529383,   4.577268 , 0.331416 ])
+                const normxs = xs.sub(xsMean).div(xsStd)
+                const result = model.predict(normxs)
+                tensorData = result.dataSync();
+                //alert('Probability of death is ' + tensorData[1] );
+                document.getElementById("imsg").innerHTML = 'Probability of death is ' + tensorData[1].toFixed(2);
+                xs.print()
+                result.print()
+              }
+            }
+            catch(error)
+            {
+                console.error(error);
+            }
+        })()
+      }
+
+    </script>
+    <link rel="manifest" href="manifest.webmanifest">
+  </head>
+  <body style="background-color:black;">
+    <noscript>
+    	<div id='js-is-off'>
+    	You need to enable JavaScript to run this app.
+    	</div>
+    </noscript>
+  <button id="butty1" class="add-button">Add to home screen</button>  
+
+  <h4><strong>Enter subject data <span id="imsg"></span></strong></h4>
+  <label for="age">Age in days (30 to 1800):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 1 id="age" name="age" min="30" max="1800" value = "50" maxLength="4">
+  <span class="jmsg"></span>
+  <label for="beats">Heart rate (20 to 350):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 1 id="beats" name="beats" min="20" max="350" value = "100" maxLength="4">
+  <span class="jmsg"></span>
+  <label for="muac">MUAC (8 to 20):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 0.1 id="muac" name="muac" min="8" max="20" value = "12" maxLength="4">
+  <span class="jmsg"></span>
+  <label for="oxsat">Oxygen saturation (30 to 100):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 0.1 id="oxsat" name="oxsat" min="30" max="100" value = "95" maxLength="4">  
+  <span class="jmsg"></span>
+
+<script>
+function check(event) {
+  // Get value of input, max and min
+ //console.log(event.target.min)
+ var inum =0
+ if (event.target.id=="age"){
+    inum=0
+ }else if (event.target.id=="beats"){
+    inum=2
+} else if (event.target.id=="muac"){
+    inum=3
+}else if (event.target.id=="oxsat"){
+    inum=4
+}
+ 
+  var min = parseInt(event.target.min);
+  var max = parseInt(event.target.max);
+  var x= document.getElementsByClassName("jmsg");
+   if(event.target.value > max || event.target.value < min){
+       x[inum].innerHTML = 'Range is ' + min + ' to '+ max;
+  //console.log('Range is ' + min + ' to '+ max)
+     if (event.target.value > max){
+      event.target.value = "";
+      }
+      if (event.target.value < min){
+      event.target.value = "";
+      }    
+      document.getElementById(event.target.id).focus();
+   }else{
+      x[inum].innerHTML =''; 
+   } 
+}
+  function maxLengthCheck(object) {
+//console.log(object.maxLength)
+    if (object.value.length > object.maxLength)
+      object.value = object.value.slice(0, object.maxLength)
+  }
+    
+  function isNumeric (evt) {
+    var theEvent = evt || window.event;
+    var key = theEvent.keyCode || theEvent.which;
+    key = String.fromCharCode (key);
+   //console.log(key)
+    var regex = /[0-9]|\./;
+    if ( !regex.test(key) ) {
+      theEvent.returnValue = false;
+       console.log(theEvent.returnValue)    
+       if(theEvent.preventDefault) theEvent.preventDefault();
+    }
+  }
+</script>
+
+<div >
+  <table>
+    <tbody>
+      <tr>
+        <td><p>Lethargy?</p></td>
+        <td><input type="radio" name="conv" id="ConvYes" value="1"></td>
+        <td><p>Yes</p></td>
+        <td><input type="radio" name="conv" id="ConvNo" value="2" checked></td>
+        <td><p>No</p></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+      <button id="butty" onclick="testout()">Make Prediction</button>
+      <h3><strong>FOR DEMO ONLY<span id="imsg"></span></strong></h3>
+  </body>
+</html>

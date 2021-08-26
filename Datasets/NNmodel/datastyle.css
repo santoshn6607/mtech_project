@@ -1,0 +1,35 @@
+label {
+    display: block;
+    font: 1rem 'Fira Sans', sans-serif;
+    color: yellow
+}
+
+input,
+label {
+    margin: 0.4rem 0;
+}
+
+p {
+  font: 1rem 'Fira Sans', sans-serif;
+    color: yellow
+}
+h4 {
+  font: 1rem 'Fira Sans', sans-serif;
+    color: yellow
+}
+h3 {
+  font: 1rem 'Fira Sans', sans-serif;
+    color: red
+}
+img{
+    max-width:450px;
+    max-height:450px;
+}
+.jmsg {
+  color: red;
+  font-weight: bold;
+}
+#imsg {
+  color: #ffffff;
+  font-weight: bold;
+}
