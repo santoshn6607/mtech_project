@@ -1,13 +1,29 @@
 # implement-model
-Implementing machine learning as a PWA
-createTF.R and export_model.R  - R code to run TensorFlow/Keras Neural Network as described above
+Implementing machine learning as a PWA (October 2021)
+The folder NNModel contains all the components required for the pneumonia PWA
+Move whole folder to an Apache web server to run the PWA
+It can also be run from https://stats.mrc.gm/NNmodel
 
-Folder Datasets containing:
+Folder NNmodel contains:
 
-combinations_v2.rds, dataout17April.rds and readme_fordata.txt  - data files used 	by createTF.R (note patient level data not publicly available)
+folder icon - icon images used by PWA for Android and iOS
+folder tfjs_model - contains the web-based tensorflow neural network (group1-shard1of1.bin and model.json)
+These were created using the tensor flow javascript converter tensorflowjs_converter --input_format=keras M_99_test.h5 tfjs_model
+The file M_99_test.h5 is the tensorflow neural network model that was created in R - this can also be loaded in R and used to predict
 
-test.h5  - selected best performing Neural Network
+Main files
+index.html - web page
+index.js - loads the service workers
+manifest.webmanifest - PWA meta data
+sw.js - service workers for offline functionality
 
-Folder ftjs_model – TensorFlow JavaScript export of test.h5
+Javascript tensorflow library
+tf.min.js
+tf.min.js.map
 
-Folder NNmodel – contains the PWA application which can be run from https://stats.mrc.gm/NNmodel
+CSS files
+datastyle.css
+noscripts.css
+style.css
+
+Contaact djeffries@mrc.gm 
