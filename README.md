@@ -1,7 +1,10 @@
 # implement-model
 Implementing machine learning as a PWA (October 2021)
+
 The folder NNModel contains all the components required for the pneumonia PWA
+
 Move whole folder to an Apache web server to run the PWA
+
 It can also be run from https://stats.mrc.gm/NNmodel
 
 Folder NNmodel contains:
