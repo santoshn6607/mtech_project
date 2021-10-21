@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mortality demo</title>
+    <link rel="apple-touch-icon" href="icon/apple-touch-icon-180x180.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#317EFB"/>
+    <link href="style.css" rel="stylesheet">
+    <link href="datastyle.css" rel="stylesheet">
+    <noscript>
+      <link href="noscript.css" rel="stylesheet">
+    </noscript>
+    <script src="index.js" defer></script>
+    <script src="tf.min.js"></script>
+    <script>
+      function testout(){
+        (async () => {
+            try
+            {
+                if (document.getElementById("age").value==""){
+			 document.getElementById("age").focus(); 
+                }  else if (document.getElementById("beats").value==""){
+                         document.getElementById("beats").focus();
+                }  else if (document.getElementById("muac").value==""){
+                         document.getElementById("muac").focus(); 
+                }  else if (document.getElementById("oxsat").value==""){
+                         document.getElementById("oxsat").focus();
+                }else{ 
+                try {
+                    const model = await tf.loadLayersModel('indexeddb://report-exec-time-model');
+                } catch(e){
+                    const model = await tf.loadLayersModel('/NNmodel/tfjs_model/model.json');
+                    await model.save('indexeddb://report-exec-time-model');
+                }
+                const model = await tf.loadLayersModel('indexeddb://report-exec-time-model');
+                var age = parseFloat(document.getElementById('age').value)
+                var beats = parseFloat(document.getElementById('beats').value)
+                var oxsat = parseFloat(document.getElementById('oxsat').value)
+                var muac = parseFloat(document.getElementById('muac').value)
+                var conv = document.getElementsByName('conv')
+                var val = parseFloat(0)
+
+                 if (conv[0].checked) {
+                    	val=1
+                    }
+                //console.log(val)
+                const xs = tf.tensor2d([30+(age-1)*15,beats,muac,30+(oxsat-1)*(70/99),val],[1, 5])
+                const xsMean = tf.tensor([425.9053677, 155.8402161 , 12.5646022,  95.3171086,   0.4057389])
+                const xsStd  = tf.tensor([343.5740294,  27.7905087,   1.8495923,   8.1769972,   0.4860549 ])
+                const normxs = xs.sub(xsMean).div(xsStd)
+                const result = model.predict(normxs)
+                tensorData = result.dataSync();
+                //alert('Probability of death is ' + tensorData[1] );
+                if (tensorData[1]<0.44){
+			document.getElementById("imsg_out").innerHTML = 'Risk of death is '+ "<span style=\"color:green\">" + "LOW"+ "</span>";
+                } else if (tensorData[1]>=0.44 && tensorData[1]<0.73){
+                        document.getElementById("imsg_out").innerHTML = 'Risk of death is '+ "<span style=\"color:orange\">" + "MEDIUM"+ "</span>";
+                } else{
+			document.getElementById("imsg_out").innerHTML = 'Risk of death is '+ "<span style=\"color:red\">" + "HIGH"+ "</span>";
+		}
+		xs.print()
+                result.print()
+              }
+            }
+            catch(error)
+            {
+                console.error(error);
+            }
+        })()
+      }
+
+    </script>
+	<script>
+	function clearResult(){
+	window.location.reload()
+	}
+  	</script>
+    <link rel="manifest" href="manifest.webmanifest">
+  </head>
+  <body style="background-color:black;">
+    <noscript>
+    	<div id='js-is-off'>
+    	You need to enable JavaScript to run this app.
+    	</div>
+    </noscript>
+  <button id="butty1" class="add-button">Add to home screen</button>  
+
+  <h4><strong>Enter subject data <span id="imsg"></span></strong></h4>
+  <label for="age">Variable 1 (1 to 100):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 1 id="age" name="age" min="1" max="100" value = "23" maxLength="4">
+  <span class="jmsg"></span>
+  <label for="beats">Variable 2 (20 to 350):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 1 id="beats" name="beats" min="20" max="350" value = "180" maxLength="4">
+  <span class="jmsg"></span>
+  <label for="muac">Variable 3 (8 to 20):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 0.1 id="muac" name="muac" min="8" max="20" value = "14" maxLength="4">
+  <span class="jmsg"></span>
+  <label for="oxsat">Variable 4 (1 to 100):</label>
+  <input type="number" onkeypress="return isNumeric(event)" onfocusout="return check(event)"  step = 0.1 id="oxsat" name="oxsat" min="1" max="100" value = "93" maxLength="4">  
+  <span class="jmsg"></span>
+
+<script>
+function check(event) {
+  // Get value of input, max and min
+ //console.log(event.target.min)
+ var inum =0
+ if (event.target.id=="age"){
+    inum=0
+ }else if (event.target.id=="beats"){
+    inum=1
+} else if (event.target.id=="muac"){
+    inum=2
+}else if (event.target.id=="oxsat"){
+    inum=3
+}
+ 
+  var min = parseInt(event.target.min);
+  var max = parseInt(event.target.max);
+  var x= document.getElementsByClassName("jmsg");
+   if(event.target.value > max || event.target.value < min){
+       x[inum].innerHTML = 'Range is ' + min + ' to '+ max;
+  //console.log('Range is ' + min + ' to '+ max)
+     if (event.target.value > max){
+      event.target.value = "";
+      }
+      if (event.target.value < min){
+      event.target.value = "";
+      }    
+      document.getElementById(event.target.id).focus();
+   }else{
+      x[inum].innerHTML =''; 
+   } 
+}
+  function maxLengthCheck(object) {
+//console.log(object.maxLength)
+    if (object.value.length > object.maxLength)
+      object.value = object.value.slice(0, object.maxLength)
+  }
+    
+  function isNumeric (evt) {
+    var theEvent = evt || window.event;
+    var key = theEvent.keyCode || theEvent.which;
+    key = String.fromCharCode (key);
+   //console.log(key)
+    var regex = /[0-9]|\./;
+    if ( !regex.test(key) ) {
+      theEvent.returnValue = false;
+       console.log(theEvent.returnValue)    
+       if(theEvent.preventDefault) theEvent.preventDefault();
+    }
+  }
+</script>
+
+<div >
+  <table>
+    <tbody>
+      <tr>
+        <td><p>Variable 5?</p></td>
+        <td><input type="radio" name="conv" id="ConvYes" value="1"></td>
+        <td><p>Yes</p></td>
+        <td><input type="radio" name="conv" id="ConvNo" value="2" checked></td>
+        <td><p>No</p></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+      <button id="butty" onclick="testout()">Make Prediction</button>
+      <input value="Reset" type="button" onclick="clearResult()"/>  
+  <h4><strong><span id="imsg_out"></span></strong></h4>    
+<h3><strong>FOR DEMO ONLY<span id="imsg"></span></strong></h3>
+  </body>
+</html>

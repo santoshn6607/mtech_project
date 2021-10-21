@@ -1,0 +1,10 @@
+#content {
+  display: none;
+}
+
+#js-is-off {
+  position: relative;
+  top: 25%;
+  border: 25px solid red;
+  background: white;
+}
