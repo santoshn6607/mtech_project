@@ -1,4 +1,4 @@
-# Implementing PWA Neural Newtwork predictor
+# Implementing PWA Neural Network predictor
 Implementing machine learning as a PWA (October 2021)<br  />
 The folder NNModel contains all the components required for the pneumonia PWA<br  />
 
