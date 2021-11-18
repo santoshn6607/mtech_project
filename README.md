@@ -9,7 +9,7 @@ Folder NNmodel contains:<br  />
 
 folder icon - icon images used by PWA for Android and iOS<br  />
 folder tfjs_model - contains the web-based tensorflow neural network (group1-shard1of1.bin and model.json)<br  />
-These were created using the tensor flow javascript converter tensorflowjs_converter --input_format=keras M_99_test.h5 tfjs_model<br  />
+These were created using the tensor flow javascript converter <br />tensorflowjs_converter --input_format=keras M_99_test.h5 tfjs_model<br  />
 The file M_99_test.h5 is the tensorflow neural network model that was created in R - this can also be loaded in R and used to predict<br  />
 
 Main files<br  />
