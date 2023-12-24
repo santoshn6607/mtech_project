@@ -1,9 +1,9 @@
 # Implementing PWA Neural Network predictor
-Implementing machine learning as a PWA (October 2021)<br  />
+Implementing machine learning as a PWA (December 2023)<br  />
 The folder NNModel contains all the components required for the pneumonia PWA<br  />
 
 Move whole folder to an Apache web server to run the PWA<br  />
-It can also be run from https://stats.mrc.gm/NNmodel<br  />
+
 
 Folder NNmodel contains:<br  />
 
@@ -27,4 +27,4 @@ datastyle.css<br  />
 noscripts.css<br  />
 style.css<br  />
 
-Contaact djeffries@mrc.gm<br  />
+Contaact santoshn6607@gmail.com<br  />
